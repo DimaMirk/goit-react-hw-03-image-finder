@@ -11,6 +11,7 @@ class Searchbar extends Component {
     e.preventDefault();
     this.props.onSubmite(this.state.image);
   };
+
   render() {
     return (
       <header className={s.Searchbar}>
