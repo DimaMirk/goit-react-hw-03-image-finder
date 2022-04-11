@@ -35,19 +35,17 @@ class App extends Component {
 
     if (prevName !== nextName) {
       this.setState({ status: 'pending' });
-
       fetchImages(this.state.image, this.state.page)
         .then(response => response.json())
         .then(data => {
           let imageArray = data.hits;
           if (data.hits.length !== 0) {
-            this.setState(({ images, status }) => ({
+            this.setState(({ images, status, page }) => ({
               images: [...imageArray],
               status: 'resolved',
             }));
             return imageArray;
           } else {
-            this.setState({ status: 'rejected' });
             return Promise.reject(new Error('Write something correct please'));
           }
         })
@@ -56,17 +54,22 @@ class App extends Component {
         });
     }
 
-    if (prevPage !== nextPage) {
+    if (prevPage !== nextPage && prevName === nextName) {
       this.setState({ status: 'pending' });
 
       fetchImages(this.state.image, this.state.page)
         .then(response => response.json())
         .then(data => {
           let imageArray = data.hits;
-          this.setState(({ images, status }) => ({
-            images: [...images, ...imageArray],
-            status: 'resolved',
-          }));
+          if (data.hits.length !== 0) {
+            this.setState(({ images, status }) => ({
+              images: [...images, ...imageArray],
+              status: 'resolved',
+            }));
+          } else {
+            this.setState({ status: 'rejected' });
+            alert('These are all pictures on your request');
+          }
 
           return imageArray;
         });
@@ -74,7 +77,7 @@ class App extends Component {
   }
 
   getImages = img => {
-    this.setState({ image: img });
+    this.setState({ image: img, page: 1 });
   };
 
   toggleModal = () => {
